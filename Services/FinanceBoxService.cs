@@ -19,6 +19,16 @@ public class FinanceBoxService
         repository.Create(financeBox);
     }
 
+    public FinanceBox? Get(int Id)
+    {
+        return repository.Get(Id);
+    }
+
+    public void Destroy(int Id)
+    {
+        repository.Destroy(Id);
+    }
+
     public List<FinanceBox> GetAll()
     {
        var financeBoxes = repository.GetAll();

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using FinanceSys.Models.FinanceBox;
 
 public class FinanceBoxCommand
@@ -20,7 +21,7 @@ public class FinanceBoxCommand
             Console.WriteLine("(3) - Edit");  
             Console.WriteLine("(4) - Remove");  
             Console.WriteLine("(5) - Back");  
-            Console.Write("Choice an action: ");  
+            Console.Write("-> Choice an action: ");  
             var action = Console.ReadLine();
             
             Console.Clear();
@@ -29,16 +30,13 @@ public class FinanceBoxCommand
              switch (action)
             {
                 case "1":
-                    Console.WriteLine("Showing Finance Box");
+                    // Select a Finance Box and show your detail
+                    HandleShow(financeBoxService, financeBoxes);
                     break;
 
                 case "2":
-                    Console.WriteLine("\n====== Creating Finance Box ======");
-                    Console.Write("What's Finance Box's name: ");
-                    var name = Console.ReadLine()!;
-
-                    var data = new CreateFinanceBoxDTO { Name = name};
-                    financeBoxService.Create(data);
+                    // Create a new Finance Box
+                    HandleCreate(financeBoxService);
                     break;
 
                 case "3":
@@ -46,22 +44,26 @@ public class FinanceBoxCommand
                     break;
 
                 case "4":
-                    Console.WriteLine("Removing Finance Box");
+                    // Select a Finance Box and removi 
+                    HandleRemove(financeBoxService, financeBoxes);
                     break;
 
                 case "5":
                     return;
 
                 default:
-                    Console.WriteLine("Insert a valid value!");
+                    InsertionError();
                     break;
             }
         }
     }
 
-    public void PrintFinanceBoxes(List<FinanceBox> list)
+    public void PrintFinanceBoxes(List<FinanceBox> list, bool noTitle = false)
     {
-        Console.WriteLine("====== Listing Finance Boxes ======");
+        if (!noTitle)
+        { 
+            Console.WriteLine("====== Listing Finance Boxes ======");
+        }
 
         if (!list.Any())
         {            
@@ -78,5 +80,105 @@ public class FinanceBoxCommand
                 item.Name,
                 item.created_at);
         }
+    }
+
+    public void HandleRemove(FinanceBoxService financeBoxService, List<FinanceBox> financeBoxes)
+    {
+        while (true)
+        {
+            string inputValue;
+            int removeId;
+
+            Console.WriteLine("\n====== Removing Finance Box ======");
+            PrintFinanceBoxes(financeBoxes, true);
+
+            do
+            {
+                Console.Write("-> What's Finance Box's Id To Remove (type '0' to cancel): ");
+                inputValue = Console.ReadLine()!;
+
+            } while (string.IsNullOrWhiteSpace(inputValue) || !int.TryParse(inputValue, out removeId));
+
+            if (removeId == 0)
+            {
+                Console.Clear();
+                return;
+            }
+
+            financeBoxService.Destroy(removeId);
+            return;
+        }
+    }
+    
+    public void HandleCreate(FinanceBoxService financeBoxService)
+    {
+        while (true)
+        {
+            string name;
+            
+            Console.WriteLine("\n====== Creating Finance Box ======");
+
+            do
+            {
+                Console.Write("-> What's Finance Box's name (type 'back' to cancel): ");
+                name = Console.ReadLine()!;
+
+            } while (string.IsNullOrWhiteSpace(name) || name.Length > 150);
+
+            if (name == "back")
+            {
+                Console.Clear();
+                return;
+            } 
+
+            var data = new CreateFinanceBoxDTO { Name = name};
+            financeBoxService.Create(data);
+            return;
+        }
+    }
+
+    public void HandleShow(FinanceBoxService financeBoxService, List<FinanceBox> financeBoxes)
+    {
+        PrintFinanceBoxes(financeBoxes);
+
+        Console.Write("-> What's Finance Box's Id To Show (type '0' to cancel): ");
+        var showId = Convert.ToInt32(Console.ReadLine()!);
+
+        if (showId == 0)
+        {
+            Console.Clear();
+            return;
+        } 
+
+        var financeBoxData = financeBoxService.Get(showId);
+
+        Console.Clear(); 
+
+        if (financeBoxData is not null)
+        {
+            Console.WriteLine($"====== {financeBoxData.Name} ======");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("Credit: R$350.23 ");
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("Debit: R$44 ");
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("Total: R$306.23");
+
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("\n");
+    }
+
+    public void InsertionError()
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("XXXXXX Insert a valid value! XXXXXX");
+        Console.ResetColor();
     }
 }
