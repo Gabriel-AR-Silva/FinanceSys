@@ -112,10 +112,9 @@ public class FinanceBoxCommand
             {
                 Console.WriteLine($"XXXXXX Removed Finance Box '{data.Name}' Successfully XXXXXX");
                 return;
-            } else
-            {
-                Console.WriteLine(result.Error);
-            }
+            } 
+                
+            Console.WriteLine(result.Error);
         }
     }
     
@@ -159,31 +158,30 @@ public class FinanceBoxCommand
             return;
         } 
 
-        var financeBox = financeBoxService.Get(showId);
-        var data = financeBox.Data;
+        var result = financeBoxService.Get(showId);
+        var data = result.Data;
 
         Console.Clear(); 
 
-        if (financeBox.Success && data is not null)
+        if (!result.Success && data is null) 
         {
-            Console.WriteLine($"====== {data.Name} ======");
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Credit: R$350.23 ");
-
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write("Debit: R$44 ");
-
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.Write("Total: R$306.23");
-
-            Console.ResetColor();
-            Console.WriteLine();
-        } else
-        {
-            Console.WriteLine(financeBox.Error);
+            Console.WriteLine(result.Error);
+            Console.WriteLine("\n");
+            return;
         }
 
+        Console.WriteLine($"====== {data.Name} ======");
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write("Credit: R$350.23 ");
+
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        Console.Write("Debit: R$44 ");
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write("Total: R$306.23");
+
+        Console.ResetColor();
         Console.WriteLine("\n");
     }
 
