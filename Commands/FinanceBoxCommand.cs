@@ -150,13 +150,14 @@ public class FinanceBoxCommand
             return;
         } 
 
-        var financeBoxData = financeBoxService.Get(showId);
+        var financeBox = financeBoxService.Get(showId);
+        var data = financeBox.Data;
 
         Console.Clear(); 
 
-        if (financeBoxData is not null)
+        if (financeBox.Success && data is not null)
         {
-            Console.WriteLine($"====== {financeBoxData.Name} ======");
+            Console.WriteLine($"====== {data.Name} ======");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("Credit: R$350.23 ");
@@ -169,6 +170,9 @@ public class FinanceBoxCommand
 
             Console.ResetColor();
             Console.WriteLine();
+        } else
+        {
+            Console.WriteLine(financeBox.Error);
         }
 
         Console.WriteLine("\n");

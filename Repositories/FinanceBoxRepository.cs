@@ -31,12 +31,8 @@ public class FinanceBoxRepository
                     };
 
                     return financeBox;
+                }
             }
-            }
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\nXXXXXX Finance Box with ID '{financeBoxId}' not found to show XXXXXX\n");
-            Console.ResetColor();
 
             return null;
         }

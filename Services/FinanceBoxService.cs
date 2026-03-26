@@ -19,9 +19,17 @@ public class FinanceBoxService
         repository.Create(financeBox);
     }
 
-    public FinanceBox? Get(int Id)
+    public Result<FinanceBox> Get(int financeBoxId)
     {
-        return repository.Get(Id);
+        var result = new Result<FinanceBox>(); 
+        var data = repository.Get(financeBoxId);
+
+        if (data is null)
+        {
+            return result.Fail($"Finance Box with ID '{financeBoxId}' not found");
+        }
+
+        return result.OK(data);
     }
 
     public void Destroy(int Id)
