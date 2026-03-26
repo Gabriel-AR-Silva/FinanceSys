@@ -69,31 +69,17 @@ public class FinanceBoxRepository
         }
     }
 
-    public void Destroy(int Id)
+    public void Destroy(int financeBoxId)
     {
         try
         {
             using var connection = database.GetConnection();
             connection.Open();
 
-            var financebox = Get(Id);
-
-            if (financebox is null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\nXXXXXX Finance Box with ID '{Id}' not found to remove XXXXXX\n");
-                Console.ResetColor();
-                return;
-            }
-
             var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM finance_box WHERE Id = $Id";
-            cmd.Parameters.AddWithValue("$Id", Id);
+            cmd.Parameters.AddWithValue("$Id", financeBoxId);
             cmd.ExecuteNonQuery();
-            
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\n>>>>>> Deleted Finance Box '{financebox.Name}' Succefully! >>>>>>\n");
-            Console.ResetColor();
         }
         catch (Exception err)
         {

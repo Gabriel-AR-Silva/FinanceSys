@@ -32,9 +32,19 @@ public class FinanceBoxService
         return result.OK(data);
     }
 
-    public void Destroy(int Id)
+    public Result<FinanceBox> Destroy(int financeBoxId)
     {
-        repository.Destroy(Id);
+        var result = new Result<FinanceBox>(); 
+        var data = repository.Get(financeBoxId);
+
+        if (data is null)
+        {
+            return result.Fail($"Finance Box with ID '{financeBoxId}' not found");
+        }
+
+        repository.Destroy(financeBoxId);
+
+        return result.OK(data);
     }
 
     public List<FinanceBox> GetAll()

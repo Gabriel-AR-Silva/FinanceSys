@@ -105,8 +105,17 @@ public class FinanceBoxCommand
                 return;
             }
 
-            financeBoxService.Destroy(removeId);
-            return;
+            var result = financeBoxService.Destroy(removeId);
+            var data = result.Data;
+
+            if (result.Success && data is not null)
+            {
+                Console.WriteLine($"XXXXXX Removed Finance Box '{data.Name}' Successfully XXXXXX");
+                return;
+            } else
+            {
+                Console.WriteLine(result.Error);
+            }
         }
     }
     
