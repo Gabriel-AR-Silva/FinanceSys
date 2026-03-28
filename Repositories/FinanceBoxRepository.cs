@@ -69,6 +69,19 @@ public class FinanceBoxRepository
         }
     }
 
+    public void Update(int FinanceBoxId, string newName)
+    {
+        using var connection = database.GetConnection();
+        connection.Open();
+
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = "UPDATE finance_box SET Name = '$name' WHERE Id = $id";
+        cmd.Parameters.AddWithValue("$id", financeBoxId);
+        cmd.Parameters.AddWithValue("$name", newName);
+        cmd.ExecuteNonQuery();
+
+    }
+
     public void Destroy(int financeBoxId)
     {
         try

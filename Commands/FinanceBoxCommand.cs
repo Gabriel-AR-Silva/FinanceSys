@@ -40,7 +40,7 @@ public class FinanceBoxCommand
                     break;
 
                 case "3":
-                    Console.WriteLine("Updating Finance Box");
+                    HandleUpdate(financeBoxService, financeBoxes);
                     break;
 
                 case "4":
@@ -183,6 +183,56 @@ public class FinanceBoxCommand
 
         Console.ResetColor();
         Console.WriteLine("\n");
+    }
+
+    public void HandleUpdate(FinanceBoxService financeBoxService, List<FinanceBox> financeBoxes)
+    {
+        PrintFinanceBoxes(financeBoxes);
+
+        Console.Write("-> What's Finance Box's Id To Edit (type '0' to cancel): ");
+        var showId = Convert.ToInt32(Console.ReadLine()!);
+
+        if (showId == 0)
+        {
+            Console.Clear();
+            return;
+        } 
+
+        var result = financeBoxService.Get(showId);
+        var data = result.Data;
+
+        Console.Clear(); 
+
+        if (!result.Success && data is null) 
+        {
+            Console.WriteLine(result.Error);
+            Console.WriteLine("\n");
+            return;
+        }
+
+        while (true)
+        {
+            string newName;
+            
+            Console.WriteLine("\n$====== Updating Finance Box '{data.Name}' ======");
+
+            do
+            {
+                Console.Write("-> What's Finance Box's new name (type 'back' to cancel): ");
+                newName = Console.ReadLine()!;
+
+            } while (string.IsNullOrWhiteSpace(newName) || newName.Length > 150);
+
+            if (newName == "back")
+            {
+                Console.Clear();
+                return;
+            } 
+
+            var data = new CreateFinanceBoxDTO { Name = newName};
+            financeBoxService.Create(data);
+            return;
+        }
     }
 
     public void InsertionError()

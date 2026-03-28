@@ -11,12 +11,32 @@ public class FinanceBoxService
 
     public void Create(CreateFinanceBoxDTO data)
     {
+        var result = new Result<FinanceBox>(); 
+
+        if(data is null)
+            throw new Exception ("Name is required");
+
+        if(string.IsNullOrWhiteSpace(data.Name))
+            throw new Exception ("Name is required");
+
+        var data = repository.Get(financeBoxId);
+
+        if (data is null)
+        {
+            return result.Fail($"Finance Box with ID '{financeBoxId}' not found");
+        }
+
+        repository.Create(financeBox);
+    }
+
+    public Result<FinanceBox> Update(CreateFinanceBoxDTO data)
+    {
         if(string.IsNullOrWhiteSpace(data.Name))
             throw new Exception ("Name is required");
 
         var financeBox = new FinanceBox { Name = data.Name };
 
-        repository.Create(financeBox);
+        repository.Update(financeBoxId, data.Name);
     }
 
     public Result<FinanceBox> Get(int financeBoxId)
