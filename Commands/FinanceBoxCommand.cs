@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using FinanceSys.Models.FinanceBox;
 
 public class FinanceBoxCommand
@@ -30,7 +29,7 @@ public class FinanceBoxCommand
              switch (action)
             {
                 case "1":
-                    // Select a Finance Box and show your detail
+                    // Select a Finance Box to view its details
                     HandleShow(financeBoxService, financeBoxes);
                     break;
 
@@ -139,7 +138,7 @@ public class FinanceBoxCommand
                 return;
             } 
 
-            var data = new CreateFinanceBoxDTO { Name = name};
+            var data = new BaseFinanceBoxDTO { Name = name};
             financeBoxService.Create(data);
             return;
         }
@@ -163,7 +162,7 @@ public class FinanceBoxCommand
 
         Console.Clear(); 
 
-        if (!result.Success && data is null) 
+        if (!result.Success || data is null) 
         {
             Console.WriteLine(result.Error);
             Console.WriteLine("\n");
@@ -199,22 +198,23 @@ public class FinanceBoxCommand
         } 
 
         var result = financeBoxService.Get(showId);
-        var data = result.Data;
-
-        Console.Clear(); 
-
-        if (!result.Success && data is null) 
-        {
-            Console.WriteLine(result.Error);
-            Console.WriteLine("\n");
-            return;
-        }
 
         while (true)
         {
             string newName;
+
+            var data = result.Data;
+
+            Console.Clear(); 
+
+            if (!result.Success || data is null) 
+            {
+                Console.WriteLine(result.Error);
+                Console.WriteLine("\n");
+                return;
+            }
             
-            Console.WriteLine("\n$====== Updating Finance Box '{data.Name}' ======");
+            Console.WriteLine($"\n====== Updating Finance Box '{data.Name}' ======");
 
             do
             {
@@ -229,8 +229,8 @@ public class FinanceBoxCommand
                 return;
             } 
 
-            var data = new CreateFinanceBoxDTO { Name = newName};
-            financeBoxService.Create(data);
+            var dtaData = new BaseFinanceBoxDTO { Name = newName};
+            financeBoxService.Create(dtaData);
             return;
         }
     }

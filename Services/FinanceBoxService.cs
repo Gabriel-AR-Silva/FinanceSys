@@ -9,34 +9,47 @@ public class FinanceBoxService
         this.repository = repository;
     }
 
-    public void Create(CreateFinanceBoxDTO data)
+    public void Update(BaseFinanceBoxDTO dtoData)
     {
         var result = new Result<FinanceBox>(); 
 
-        if(data is null)
+        if(dtoData is null)
             throw new Exception ("Name is required");
 
-        if(string.IsNullOrWhiteSpace(data.Name))
+        if(string.IsNullOrWhiteSpace(dtoData.Name))
             throw new Exception ("Name is required");
 
-        var data = repository.Get(financeBoxId);
+        // var data = repository.Get(financeBoxId);
 
-        if (data is null)
-        {
-            return result.Fail($"Finance Box with ID '{financeBoxId}' not found");
-        }
+        // if (data is null)
+        // {
+        //     return result.Fail($"Finance Box with ID '{financeBoxId}' not found");
+        // }
 
-        repository.Create(financeBox);
+        // repository.Create(financeBox);
     }
 
-    public Result<FinanceBox> Update(CreateFinanceBoxDTO data)
+    public Result<FinanceBox> Create(BaseFinanceBoxDTO data)
     {
-        if(string.IsNullOrWhiteSpace(data.Name))
-            throw new Exception ("Name is required");
+        var result = new Result<FinanceBox>(); 
+        var validated = data.Validate();
+
+        if (validated.Any())
+        {
+            // Change it in refactor to get List<string>
+            return result.Fail(validated[0]);
+        }
 
         var financeBox = new FinanceBox { Name = data.Name };
 
-        repository.Update(financeBoxId, data.Name);
+        var newData = repository.Create(financeBox);
+
+        if (newData is null)
+        {
+            return result.Fail("Can't Possibly Create The Finance Box");
+        }
+
+        return result.OK(newData);
     }
 
     public Result<FinanceBox> Get(int financeBoxId)

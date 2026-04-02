@@ -43,9 +43,8 @@ public class FinanceBoxRepository
         }
     }
     
-    public void Create(FinanceBox financeBox)
+    public FinanceBox? Create(FinanceBox financeBox)
     {
-
         try
         {            
             using var connection = database.GetConnection();
@@ -53,23 +52,21 @@ public class FinanceBoxRepository
 
             var command = connection.CreateCommand();
 
-            command.CommandText = @"Insert Into finance_box (name) VALUES ($name)";
+            command.CommandText = @"INSERT INTO finance_box (name) VALUES ($name); SELECT last_insert_rowid();";
 
             command.Parameters.AddWithValue("$name", financeBox.Name);
 
-            command.ExecuteNonQuery();
+            var id = (long)command.ExecuteScalar()!;
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\n>>>>>> Created Finance Box Succefully! >>>>>>\n");
-            Console.ResetColor();
+            return Get((int)id);
         }
-        catch (Exception err)
+        catch (Exception)
         {
-            Console.WriteLine($"Error to add a FinanceBox: {err.Message}");
+            return null;
         }
     }
 
-    public void Update(int FinanceBoxId, string newName)
+    public void Update(int financeBoxId, string newName)
     {
         using var connection = database.GetConnection();
         connection.Open();
